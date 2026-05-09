@@ -2,7 +2,7 @@ import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { app } from "../../src/app.js";
 
-describe("GET /heath/db", () => {
+describe("GET /health/db", () => {
   it("should return database health status", async () => {
     const res = await request(app).get("/health/db");
 

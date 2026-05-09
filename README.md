@@ -13,11 +13,11 @@ Backend API untuk aplikasi **CekCok - Cek dulu supaya cocok!** - sistem Klasifik
 ## Checkpoint pengerjaan
 
 - [ ] Backend melakukan HTTP request ke AI inference API.
-- [ ] Membangun RESTful API untuk mendukung aplikasi Front-End.
-- [ ] Membuat RESTful API dengan URL yang mengikuti standar konvensi RESTful.
+- [x] Membangun RESTful API untuk mendukung aplikasi Front-End.
+- [x] Membuat RESTful API dengan URL yang mengikuti standar konvensi RESTful.
 - [ ] Mengintegrasikan kemampuan AI/ML sebagai fitur utama aplikasi, baik melalui back-end aplikasi maupun langsung pada perangkat pengguna (browser).
 - [ ] Memastikan implementasi fitur utama yang dikembangkan dalam proyek berjalan dengan baik tanpa menyebabkan aplikasi crash.
-- [ ] RESTful API dapat menyimpan data ke dalam database.
+- [x] RESTful API dapat menyimpan data ke dalam database.
 - [x] RESTful API dibangun menggunakan framework Express.
 - [ ] Deploy backend API ke Vercel.
 
@@ -43,6 +43,7 @@ cp .env.example .env
 ```
 
 Contoh .env:
+
 ```bash
 PORT=3000
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cekcok
@@ -72,12 +73,15 @@ docker exec -i cekcok-postgres psql -U postgres -d cekcok < database/migrations/
 ```bash
 docker exec -it cekcok-postgres psql -U postgres -d cekcok
 ```
+
 ### 7. Cek database
+
 ```bash
 \dt
 ```
 
 Cek detail table:
+
 ```bash
 \d+ checks
 ```

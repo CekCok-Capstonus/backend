@@ -1,19 +1,22 @@
 {
   "name": "backend-engineer",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Repo backend untuk aplikasi CekCok",
+  "main": "src/server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "start": "node dist/server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CekCok-Capstonus/backend.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Muhamad Rifki Saputra",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/CekCok-Capstonus/backend/issues"
   },

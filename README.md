@@ -18,7 +18,7 @@ Backend API untuk aplikasi **CekCok - Cek dulu supaya cocok!** - sistem Klasifik
 - [ ] Mengintegrasikan kemampuan AI/ML sebagai fitur utama aplikasi, baik melalui back-end aplikasi maupun langsung pada perangkat pengguna (browser).
 - [ ] Memastikan implementasi fitur utama yang dikembangkan dalam proyek berjalan dengan baik tanpa menyebabkan aplikasi crash.
 - [ ] RESTful API dapat menyimpan data ke dalam database.
-- [ ] RESTful API dibangun menggunakan framework Express.
+- [x] RESTful API dibangun menggunakan framework Express.
 - [ ] Deploy backend API ke Vercel.
 
 ## Local Development Setup

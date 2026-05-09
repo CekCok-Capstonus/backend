@@ -9,7 +9,7 @@
     "lib": ["ES2024"],
     "types": ["node"],
 
-    "sourceMap": true,
+    "sourceMap": false,
     "declaration": false,
     "declarationMap": false,
 

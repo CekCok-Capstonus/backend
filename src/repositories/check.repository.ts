@@ -135,3 +135,36 @@ export async function getCheckById(id: string) {
 
   return result.rows[0] ?? null;
 }
+
+type CreateUrlCheckInput = {
+  source_url: string;
+  title?: string | null;
+  content: string;
+};
+
+export async function createUrlCheck(input: CreateUrlCheckInput) {
+  const result = await pool.query(
+    `
+       INSERT INTO checks (input_type, source_url, title, content)
+       VALUES ('url', $1, $2, $3)
+       RETURNING
+         id,
+         input_type,
+         source_url,
+         title,
+         content,
+         label,
+         confidence_score,
+         status,
+         category,
+         explanation,
+         error_message,
+         evidence_refs,
+         created_at,
+         updated_at
+       `,
+    [input.source_url, input.title ?? null, input.content],
+  );
+
+  return result.rows[0];
+}

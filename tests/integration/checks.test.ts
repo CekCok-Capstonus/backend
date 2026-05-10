@@ -83,3 +83,23 @@ describe("GET /api/checks/:id", () => {
     expect(res.body.data.id).toBe(id);
   });
 });
+
+describe("POST /api/checks/url", () => {
+  it("should reject invalid url", async () => {
+    const res = await request(app).post("/api/checks/url").send({
+      url: "not-url",
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+
+  it("should reject localhost url", async () => {
+    const res = await request(app).post("/api/checks/url").send({
+      url: "http://localhost:3000",
+    });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+});

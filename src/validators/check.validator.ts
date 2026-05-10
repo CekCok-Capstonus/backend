@@ -18,3 +18,7 @@ export const getChecksQuerySchema = z.object({
 export const checkIdParamSchema = z.object({
   id: z.uuid("ID tidak valid"),
 });
+
+export const createUrlCheckSchema = z.object({
+  url: z.url("URL tidak valid"),
+});

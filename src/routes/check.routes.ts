@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createTextCheckController,
+  createUrlCheckController,
   getCheckByIdController,
   getChecksController,
 } from "../controllers/check.controller.js";
@@ -14,6 +15,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   checkIdParamSchema,
   createTextCheckSchema,
+  createUrlCheckSchema,
   getChecksQuerySchema,
 } from "../validators/check.validator.js";
 
@@ -35,4 +37,10 @@ checkRoutes.get(
   "/:id",
   validateParams(checkIdParamSchema),
   asyncHandler(getCheckByIdController),
+);
+
+checkRoutes.post(
+  "/url",
+  validateBody(createUrlCheckSchema),
+  asyncHandler(createUrlCheckController),
 );

@@ -29,3 +29,23 @@ describe("POST /api/checks", () => {
     expect(res.body.data.confidence_score).toBeNull();
   });
 });
+
+describe("GET /api/checks", () => {
+  it("should return checks list with pagination", async () => {
+    const res = await request(app).get("/api/checks?page=1&limit=10");
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.pagination.page).toBe(1);
+    expect(res.body.pagination.limit).toBe(10);
+    expect(res.body.pagination.total).toBeDefined();
+  });
+
+  it("should reject invalid pagination", async () => {
+    const res = await request(app).get("/api/checks?page=0&limit=10");
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+});

@@ -17,3 +17,19 @@ export function validateBody(schema: z.ZodType) {
     next();
   };
 }
+
+export function validateQuery(schema: z.ZodType) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.query);
+
+    if (!result.success) {
+      const message = result.error.issues[0]?.message || "Query tidak valid";
+      next(new AppError(message, 400));
+      return;
+    }
+
+    // assign hasil validasi ke lokal karena req.query di express tidak bisa dioverwrite
+    res.locals.query = result.data;
+    next();
+  };
+}

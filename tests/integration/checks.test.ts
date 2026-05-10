@@ -49,3 +49,37 @@ describe("GET /api/checks", () => {
     expect(res.body.success).toBe(false);
   });
 });
+
+describe("GET /api/checks/:id", () => {
+  it("should reject invalid uuid", async () => {
+    const res = await request(app).get("/api/checks/id-random");
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+
+  it("should return 404 when check not found", async () => {
+    const res = await request(app).get(
+      "/api/checks/00000000-0000-0000-0000-000000000000",
+    );
+
+    expect(res.status).toBe(404);
+    expect(res.body.success).toBe(false);
+  });
+
+  it("should return check detail by id", async () => {
+    const createRes = await request(app).post("/api/checks").send({
+      title: "Judul berita test",
+      content:
+        " Ini adalah konten berita mnimal untuk melakukan pengujian endpoint create check.",
+    });
+
+    const id = createRes.body.data.id;
+
+    const res = await request(app).get(`/api/checks/${id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.data.id).toBe(id);
+  });
+});

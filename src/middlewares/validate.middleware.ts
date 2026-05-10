@@ -33,3 +33,19 @@ export function validateQuery(schema: z.ZodType) {
     next();
   };
 }
+
+export function validateParams(schema: z.ZodType) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.params);
+
+    if (!result.success) {
+      const message =
+        result.error.issues[0]?.message || "Parameter tidak valid";
+      next(new AppError(message, 400));
+      return;
+    }
+
+    res.locals.params = result.data;
+    next();
+  };
+}

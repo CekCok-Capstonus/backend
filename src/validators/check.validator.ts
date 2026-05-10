@@ -14,3 +14,7 @@ export const getChecksQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(50).default(10),
   search: z.string().trim().optional(),
 });
+
+export const checkIdParamSchema = z.object({
+  id: z.uuid("ID tidak valid"),
+});

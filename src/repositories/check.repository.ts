@@ -108,3 +108,30 @@ export async function getChecks(input: GetChecksInput) {
     },
   };
 }
+
+export async function getCheckById(id: string) {
+  const result = await pool.query(
+    `
+    SELECT
+      id,
+      input_type,
+      source_url,
+      title,
+      content,
+      label,
+      confidence_score,
+      status,
+      category,
+      explanation,
+      error_message,
+      evidence_refs,
+      created_at,
+      updated_at
+    FROM checks
+    WHERE id = $1
+    `,
+    [id],
+  );
+
+  return result.rows[0] ?? null;
+}

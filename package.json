@@ -24,15 +24,18 @@
   },
   "homepage": "https://github.com/CekCok-Capstonus/backend#readme",
   "dependencies": {
+    "@extractus/article-extractor": "^8.1.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "html-to-text": "^10.0.0",
     "pg": "^8.20.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/html-to-text": "^9.0.4",
     "@types/node": "^25.6.2",
     "@types/pg": "^8.20.0",
     "@types/supertest": "^7.2.0",

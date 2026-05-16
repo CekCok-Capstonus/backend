@@ -5,18 +5,46 @@ import {
   createUrlCheck,
   getCheckById,
   getChecks,
+  updateCheckResult,
 } from "../repositories/check.repository.js";
 import { AppError } from "../utils/AppError.js";
 import { extractArticleFromUrl } from "../services/article-extractor.service.js";
+import { predictNews } from "../services/ai-api.service.js";
 
 export async function createTextCheckController(req: Request, res: Response) {
-  const check = await createTextCheck(req.body);
+  const { title, content } = req.body as { title?: string; content: string };
+
+  const check = await createTextCheck({ title: title ?? "", content });
 
   res.status(201).json({
     success: true,
     message: "Pengecekan berita berhasil dibuat",
     data: check,
   });
+
+  // background AI prediction
+  (async () => {
+    try {
+      const prediction = await predictNews(content);
+      await updateCheckResult({
+        id: check.id,
+        label: prediction.label,
+        confidence_score: prediction.confidence_score,
+        status: "success",
+      });
+    } catch (error) {
+      await updateCheckResult({
+        id: check.id,
+        label: "hoax",
+        confidence_score: 0,
+        status: "fail",
+        error_message:
+          error instanceof AppError
+            ? error.message
+            : "Gagal melakukan prediksi",
+      });
+    }
+  })();
 }
 
 export async function getChecksController(req: Request, res: Response) {
@@ -75,4 +103,28 @@ export async function createUrlCheckController(req: Request, res: Response) {
       },
     ],
   });
+
+  // background AI prediction
+  (async () => {
+    try {
+      const prediction = await predictNews(article.content);
+      await updateCheckResult({
+        id: check.id,
+        label: prediction.label,
+        confidence_score: prediction.confidence_score,
+        status: "success",
+      });
+    } catch (error) {
+      await updateCheckResult({
+        id: check.id,
+        label: "hoax",
+        confidence_score: 0,
+        status: "fail",
+        error_message:
+          error instanceof AppError
+            ? error.message
+            : "Gagal melakukan prediksi",
+      });
+    }
+  })();
 }

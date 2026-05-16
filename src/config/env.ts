@@ -7,6 +7,8 @@ const envSchema = z.object({
     .default("development"),
   PORT: z.coerce.number().int().positive().default(3000),
   DATABASE_URL: z.url("DATABASE_URL tidak valid"),
+  AI_API_URL: z.url("AI_API_URL tidak valid"),
+  AI_API_TIMEOUT: z.coerce.number().int().positive().default(30000),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

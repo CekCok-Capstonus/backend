@@ -168,3 +168,50 @@ export async function createUrlCheck(input: CreateUrlCheckInput) {
 
   return result.rows[0];
 }
+
+type UpdateCheckResultInput = {
+  id: string;
+  label: "hoax" | "valid";
+  confidence_score: number;
+  status: "success" | "fail";
+  error_message?: string;
+};
+
+export async function updateCheckResult(input: UpdateCheckResultInput) {
+  const result = await pool.query(
+    `
+    UPDATE checks
+    SET
+      label = $2,
+      confidence_score = $3,
+      status = $4,
+      error_message = $5,
+      updated_at = NOW()
+    WHERE id = $1
+    RETURNING
+      id,
+      input_type,
+      source_url,
+      title,
+      content,
+      label,
+      confidence_score,
+      status,
+      category,
+      explanation,
+      error_message,
+      evidence_refs,
+      created_at,
+      updated_at
+    `,
+    [
+      input.id,
+      input.label,
+      input.confidence_score,
+      input.status,
+      input.error_message ?? null,
+    ],
+  );
+
+  return result.rows[0];
+}

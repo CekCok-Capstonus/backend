@@ -19,7 +19,7 @@ Backend API untuk aplikasi **CekCok - Cek dulu supaya cocok!** - sistem Klasifik
 - [x] Memastikan implementasi fitur utama yang dikembangkan dalam proyek berjalan dengan baik tanpa menyebabkan aplikasi crash.
 - [x] RESTful API dapat menyimpan data ke dalam database.
 - [x] RESTful API dibangun menggunakan framework Express.
-- [ ] Deploy backend API ke Vercel.
+- [x] Deploy backend API ke Vercel.
 
 ## Local Development Setup
 

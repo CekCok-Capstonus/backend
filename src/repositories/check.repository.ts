@@ -20,10 +20,8 @@ export async function createTextCheck(input: CreateTextCheckInput) {
       label,
       confidence_score,
       status,
-      category,
       explanation,
       error_message,
-      evidence_refs,
       created_at,
       updated_at
     `,
@@ -104,10 +102,8 @@ export async function getChecks(input: GetChecksInput) {
       label,
       confidence_score,
       status,
-      category,
       explanation,
       error_message,
-      evidence_refs,
       created_at,
       updated_at
     FROM checks
@@ -141,10 +137,8 @@ export async function getCheckById(id: string) {
       label,
       confidence_score,
       status,
-      category,
       explanation,
       error_message,
-      evidence_refs,
       created_at,
       updated_at
     FROM checks
@@ -176,10 +170,8 @@ export async function createUrlCheck(input: CreateUrlCheckInput) {
          label,
          confidence_score,
          status,
-         category,
          explanation,
          error_message,
-         evidence_refs,
          created_at,
          updated_at
        `,
@@ -219,10 +211,8 @@ export async function updateCheckResult(input: UpdateCheckResultInput) {
       label,
       confidence_score,
       status,
-      category,
       explanation,
       error_message,
-      evidence_refs,
       created_at,
       updated_at
     `,

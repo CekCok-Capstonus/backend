@@ -1,0 +1,3 @@
+ALTER TABLE checks
+DROP COLUMN IF EXISTS category,
+DROP COLUMN IF EXISTS evidence_refs;

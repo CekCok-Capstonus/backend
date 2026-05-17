@@ -195,6 +195,7 @@ type UpdateCheckResultInput = {
   confidence_score: number;
   status: "success" | "fail";
   error_message?: string;
+  explanation?: string;
 };
 
 export async function updateCheckResult(input: UpdateCheckResultInput) {
@@ -206,6 +207,7 @@ export async function updateCheckResult(input: UpdateCheckResultInput) {
       confidence_score = $3,
       status = $4,
       error_message = $5,
+      explanation = $6,
       updated_at = NOW()
     WHERE id = $1
     RETURNING
@@ -230,6 +232,7 @@ export async function updateCheckResult(input: UpdateCheckResultInput) {
       input.confidence_score,
       input.status,
       input.error_message ?? null,
+      input.explanation ?? null,
     ],
   );
 

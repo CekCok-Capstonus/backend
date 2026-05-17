@@ -31,6 +31,7 @@ export async function createTextCheckController(req: Request, res: Response) {
         label: prediction.label,
         confidence_score: prediction.confidence_score,
         status: "success",
+        explanation: prediction.explanation,
       });
     } catch (error) {
       await updateCheckResult({
@@ -113,6 +114,7 @@ export async function createUrlCheckController(req: Request, res: Response) {
         label: prediction.label,
         confidence_score: prediction.confidence_score,
         status: "success",
+        explanation: prediction.explanation,
       });
     } catch (error) {
       await updateCheckResult({

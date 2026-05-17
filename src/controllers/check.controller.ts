@@ -16,36 +16,48 @@ export async function createTextCheckController(req: Request, res: Response) {
 
   const check = await createTextCheck({ title: title ?? "", content });
 
-  res.status(201).json({
-    success: true,
-    message: "Pengecekan berita berhasil dibuat",
-    data: check,
-  });
+  // AI prediction
+  try {
+    console.log(`[AI] Starting prediction for check ${check.id}`);
+    const prediction = await predictNews(content);
+    console.log(
+      `[AI] Prediction success for check ${check.id}:`,
+      prediction.label,
+    );
 
-  // background AI prediction
-  (async () => {
-    try {
-      const prediction = await predictNews(content);
-      await updateCheckResult({
-        id: check.id,
-        label: prediction.label,
-        confidence_score: prediction.confidence_score,
-        status: "success",
-        explanation: prediction.explanation,
-      });
-    } catch (error) {
-      await updateCheckResult({
-        id: check.id,
-        label: "hoax",
-        confidence_score: 0,
-        status: "fail",
-        error_message:
-          error instanceof AppError
-            ? error.message
-            : "Gagal melakukan prediksi",
-      });
-    }
-  })();
+    const updatedCheck = await updateCheckResult({
+      id: check.id,
+      label: prediction.label,
+      confidence_score: prediction.confidence_score,
+      status: "success",
+      explanation: prediction.explanation,
+    });
+
+    console.log(`[AI] Database updated for check ${check.id}`);
+
+    res.status(201).json({
+      success: true,
+      message: "Pengecekan berita berhasil dibuat",
+      data: updatedCheck,
+    });
+  } catch (error) {
+    console.error(`[AI] Error for check ${check.id}:`, error);
+
+    const failedCheck = await updateCheckResult({
+      id: check.id,
+      label: "hoax",
+      confidence_score: 0,
+      status: "fail",
+      error_message:
+        error instanceof AppError ? error.message : "Gagal melakukan prediksi",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Pengecekan berita berhasil dibuat",
+      data: failedCheck,
+    });
+  }
 }
 
 export async function getChecksController(req: Request, res: Response) {
@@ -86,47 +98,72 @@ export async function createUrlCheckController(req: Request, res: Response) {
     content: article.content,
   });
 
-  res.status(201).json({
-    success: true,
-    message: "Pengecekan berita dari URL berhasil dibuat",
-    data: check,
-    extraction: {
-      source: article.source,
-      published: article.published,
-      quality: article.quality,
-    },
-    steps: [
-      ...article.steps,
-      {
-        key: "ai_check",
-        label: "Menunggu proses pengecekan AI",
-        status: "warning",
-      },
-    ],
-  });
+  // AI prediction
+  try {
+    console.log(`[AI] Starting prediction for check ${check.id}`);
+    const prediction = await predictNews(article.content);
+    console.log(
+      `[AI] Prediction success for check ${check.id}:`,
+      prediction.label,
+    );
 
-  // background AI prediction
-  (async () => {
-    try {
-      const prediction = await predictNews(article.content);
-      await updateCheckResult({
-        id: check.id,
-        label: prediction.label,
-        confidence_score: prediction.confidence_score,
-        status: "success",
-        explanation: prediction.explanation,
-      });
-    } catch (error) {
-      await updateCheckResult({
-        id: check.id,
-        label: "hoax",
-        confidence_score: 0,
-        status: "fail",
-        error_message:
-          error instanceof AppError
-            ? error.message
-            : "Gagal melakukan prediksi",
-      });
-    }
-  })();
+    const updatedCheckResult = await updateCheckResult({
+      id: check.id,
+      label: prediction.label,
+      confidence_score: prediction.confidence_score,
+      status: "success",
+      explanation: prediction.explanation,
+    });
+
+    console.log(`[AI] Database updated for check ${check.id}`);
+
+    res.status(201).json({
+      success: true,
+      message: "Pengecekan berita dari URL berhasil dibuat",
+      data: check,
+      extraction: {
+        source: article.source,
+        published: article.published,
+        quality: article.quality,
+      },
+      steps: [
+        ...article.steps,
+        {
+          key: "ai_check",
+          label: "Menunggu proses pengecekan AI",
+          status: "warning",
+        },
+      ],
+    });
+  } catch (error) {
+    console.error(`[AI] Error for check ${check.id}:`, error);
+
+    const failedCheck = await updateCheckResult({
+      id: check.id,
+      label: "hoax",
+      confidence_score: 0,
+      status: "fail",
+      error_message:
+        error instanceof AppError ? error.message : "Gagal melakukan prediksi",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Pengecekan berita dari URL berhasil dibuat",
+      data: failedCheck,
+      extraction: {
+        source: article.source,
+        published: article.published,
+        quality: article.quality,
+      },
+      steps: [
+        ...article.steps,
+        {
+          key: "ai_check",
+          label: "Pengecekan AI gagal",
+          status: "fail",
+        },
+      ],
+    });
+  }
 }

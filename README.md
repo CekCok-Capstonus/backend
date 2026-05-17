@@ -236,7 +236,7 @@ Response:
 
 List website berita yang sudah dicoba dan hasilnya cukup bersih:
 
-- Tempo.co
+- Tempo.co (blocked)
 - Kompas.com
 - Detik.com
 - CNNIndonesia.com

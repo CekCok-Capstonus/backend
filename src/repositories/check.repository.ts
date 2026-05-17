@@ -37,30 +37,64 @@ type GetChecksInput = {
   page: number;
   limit: number;
   search?: string;
+  label?: "hoax" | "valid";
+  sort_by: "newest" | "oldest" | "confidence_high" | "confidence_low";
 };
 
 export async function getChecks(input: GetChecksInput) {
   const offset = (input.page - 1) * input.limit;
-  const values: unknown[] = [];
-  const where: string[] = [];
+  const conditions: string[] = [];
+  const params: (string | number)[] = [];
+  let paramIndex = 1;
 
   if (input.search) {
-    values.push(`%${input.search}%`);
-    where.push(
-      `(title ILIKE $${values.length} OR content ILIKE $${values.length})`,
+    conditions.push(
+      `(title ILIKE $${paramIndex} OR content ILIKE $${paramIndex})`,
     );
+    params.push(`%${input.search}%`);
+    paramIndex++;
   }
 
-  const whereClause = where.length > 0 ? `WHERE ${where.join(" AND ")}` : "";
+  if (input.label) {
+    conditions.push(`label = $${paramIndex}`);
+    params.push(input.label);
+    paramIndex++;
+  }
 
-  values.push(input.limit);
-  const limitParam = values.length;
+  const whereClause =
+    conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
-  values.push(offset);
-  const offsetParam = values.length;
+  let orderByClause = "ORDER BY created_at DESC";
+  switch (input.sort_by) {
+    case "oldest":
+      orderByClause = "ORDER BY created_at ASC";
+      break;
+    case "confidence_high":
+      orderByClause =
+        "ORDER BY confidence_score DESC NULLS LAST, created_at DESC";
+      break;
+    case "confidence_low":
+      orderByClause =
+        "ORDER BY confidence_score ASC NULLS LAST, created_at DESC";
+      break;
+    case "newest":
+    default:
+      orderByClause = "ORDER BY created_at DESC";
+      break;
+  }
+
+  const countResult = await pool.query(
+    `SELECT COUNT(*) FROM checks ${whereClause}`,
+    params,
+  );
+
+  const total = parseInt(countResult.rows[0].count);
+
+  params.push(input.limit, offset);
 
   // ambil data sesuai dengan kondisi filter
-  const dataQuery = `
+  const result = await pool.query(
+    `
     SELECT
       id,
       input_type,
@@ -78,28 +112,14 @@ export async function getChecks(input: GetChecksInput) {
       updated_at
     FROM checks
     ${whereClause}
-    ORDER BY created_at DESC
-    LIMIT $${limitParam}
-    OFFSET $${offsetParam}
-    `;
-
-  // hitung total data yang sesuai dengan kondisi filter
-  const countQuery = `
-    SELECT COUNT(*)::int AS total
-    FROM checks
-    ${whereClause}
-    `;
-
-  // jalankan kedua query bersama
-  const [dataResult, countResult] = await Promise.all([
-    pool.query(dataQuery, values),
-    pool.query(countQuery, values.slice(0, values.length - 2)),
-  ]);
-
-  const total = countResult.rows[0].total as number;
+    ${orderByClause}
+    LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `,
+    params,
+  );
 
   return {
-    data: dataResult.rows,
+    data: result.rows,
     pagination: {
       page: input.page,
       limit: input.limit,

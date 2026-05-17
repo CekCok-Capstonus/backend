@@ -32,7 +32,10 @@ describe("POST /api/checks", () => {
 
 describe("GET /api/checks", () => {
   it("should return checks list with pagination", async () => {
-    const res = await request(app).get("/api/checks?page=1&limit=10");
+    const res = await request(app).get("/api/checks").query({
+      page: 1,
+      limit: 10,
+    });
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
@@ -43,7 +46,45 @@ describe("GET /api/checks", () => {
   });
 
   it("should reject invalid pagination", async () => {
-    const res = await request(app).get("/api/checks?page=0&limit=10");
+    const res = await request(app)
+      .get("/api/checks")
+      .query({ page: 0, limit: 10 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.success).toBe(false);
+  });
+
+  it("should sort by oldest", async () => {
+    const res = await request(app)
+      .get("/api/checks")
+      .query({ sort_by: "oldest" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+  });
+
+  it("should sort by confidence high", async () => {
+    const res = await request(app)
+      .get("/api/checks")
+      .query({ sort_by: "confidence_high" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+  });
+
+  it("should sort by confidence low", async () => {
+    const res = await request(app)
+      .get("/api/checks")
+      .query({ sort_by: "confidence_low" });
+
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+  });
+
+  it("should reject invalid sort_by", async () => {
+    const res = await request(app)
+      .get("/api/checks")
+      .query({ sort_by: "invalid" });
 
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);

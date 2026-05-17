@@ -13,6 +13,10 @@ export const getChecksQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(10),
   search: z.string().trim().optional(),
+  label: z.enum(["hoax", "valid"]).optional(),
+  sort_by: z
+    .enum(["newest", "oldest", "confidence_high", "confidence_low"])
+    .default("newest"),
 });
 
 export const checkIdParamSchema = z.object({
